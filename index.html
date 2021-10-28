@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posicionamiento GPS</title>
+</head>
+
+<body>
+
+    <main>
+        <button onclick="geolocal()">Obtener mi ubicación</button>
+        <p id="test"></p>
+        <p><a id="linkmaps" href="" target="_blank">Link a Maps</a></p>
+        <!-- <p><a id="linkmaps2" href="" target="_blank">Link a Maps 2</a></p> -->
+    </main>
+
+    <script>
+        function geolocal() {
+            miVariable = document.getElementById("test");
+
+            if (navigator.geolocation) {
+                miVariable.innerHTML = "Tu dispositivo soporta la geolocalización";
+                navigator.geolocation.getCurrentPosition(mostrarPosicion);
+            } else {
+                miVariable.innerHTML = "Lo sentimos, tu dispositivo no admite la geolocalización";
+            }
+        }
+
+        function mostrarPosicion(posicion) {
+            latitud = posicion.coords.latitude;
+            latitud = latitud.toFixed(6);
+            longitud = posicion.coords.longitude;
+            longitud = longitud.toFixed(6);
+            miVariable.innerHTML += "<br>Latitud: " + latitud;
+            miVariable.innerHTML += "<br>Longitud: " + longitud;
+            document.getElementById("linkmaps").href = "https://www.google.com/maps/place/" + latitud + "," + longitud;
+            // document.getElementById("linkmaps2").href = "https://www.google.com/maps/place/" + latlongCONVERT(latitud, longitud);
+
+        }
+
+
+        //Opcional. No es necesario la conversión porque lo hace Google Maps.
+        function latlongCONVERT(latitud, longitud) {
+            var latABS = Math.abs(latitud); /* Devuelve el valor absoluto de un número, sea positivo o negativo */
+            var latGrad = Math.floor(latABS * 1); /* Redondea un número hacia abajo a su entero más cercano */
+            var latMIN = Math.floor((latABS - latGrad) * 60); /* Vamos restando el número entero para transformarlo en minutos */
+            var latSEG = ((((latABS - latGrad) * 60) - latMIN) * 60); /* Restamos el entero  anterior ahora para segundos */
+            var latCONV = (latGrad + "°" + latMIN + "\'" + latSEG.toFixed(2) + '\"'); /* Prolongamos a centésimas de segundo */
+            if (latitud > 0) {
+                x = latCONV + 'N'; /* Si el número original era positivo, es Norte */
+            } else {
+                x = latCONV + 'S'; /* Si el número original era negativo, es Sur */
+            }
+
+            /* Repetimos el proceso para la longitud (Este, -W-Oeste) */
+            var longABS = Math.abs(longitud);
+            var longGrad = Math.floor(longABS * 1);
+            var longMIN = Math.floor((longABS - longGrad) * 60);
+            var longSEG = ((((longABS - longGrad) * 60) - longMIN) * 60);
+            var longCONV = (longGrad + "°" + longMIN + "\'" + longSEG.toFixed(2) + '\"');
+            if (longitud > 0) {
+                y = longCONV + 'E';
+            } else {
+                y = longCONV + 'W';
+            }
+            return x + ',' + y;
+        }
+    </script>
+</body>
+
+</html>
